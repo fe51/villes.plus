@@ -6,6 +6,7 @@ import Ville from './Ville'
 import villesList from '@/villesClassées'
 import { Suspense } from 'react'
 import wikidata from '@/app/wikidata'
+import getRev from './getRev'
 
 const métropoleToVille = villesList.reduce(
 	(memo, next) =>
@@ -34,16 +35,18 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 	}
 }
 
-export default ({ params, searchParams }) => {
+export default async function ({ params, searchParams }) {
 	const { ville: villeRaw } = params,
 		ville = decodeURIComponent(villeRaw),
 		osmId = searchParams.id,
 		clientProcessing = searchParams.client
+	const rev = await getRev(ville)
+	console.log('REV', rev, ville)
 	return (
 		<Wrapper>
 			<Header ville={ville} />
 			<Suspense fallback={<Fallback />}>
-				<Ville {...{ osmId, ville, clientProcessing }} />
+				<Ville {...{ osmId, ville, clientProcessing, rev }} />
 			</Suspense>
 		</Wrapper>
 	)

@@ -34,11 +34,12 @@ const debug = false
 
 const directory = getDirectory()
 
-export default ({ ville, osmId, clientProcessing }) => {
+export default ({ ville, osmId, clientProcessing, rev }) => {
 	const id = osmId || ville
 
 	const [couple, setCouple] = useState({ from: null, to: null })
 	const [socket, setSocket] = useState(null)
+	const [showRev, setShowRev] = useState(true)
 
 	const [clickedSegment, setClickedSegment] = useState()
 	const [clickedLatLon, setClickedLatLon] = useState()
@@ -295,6 +296,15 @@ export default ({ ville, osmId, clientProcessing }) => {
 				>
 					<Legend color="red" /> le reste
 				</button>
+				<button
+					css={`
+						${buttonCSS}
+						${showRev && `border: 2px solid; font-weight: bold; `}
+					`}
+					onClick={() => setShowRev(!showRev)}
+				>
+					<Legend color="purple" /> Réseau structurant
+				</button>
 				{clientProcessing && (
 					<button
 						css={`
@@ -383,6 +393,13 @@ export default ({ ville, osmId, clientProcessing }) => {
 							/>
 						)}
 						<MarkersWrapper {...{ clickedPoint, setClickedPoint, points }} />
+						{rev && showRev && (
+							<GeoJSON
+								key={'rev'}
+								data={rev}
+								style={{ weight: 12, color: 'purple', dashArray: '1rem' }}
+							/>
+						)}
 					</MapContainer>
 				)}
 			</div>
